@@ -30,10 +30,10 @@ export default function Dashboard() {
 
   useEffect(() => {
     async function loadSchedule() {
-      const response = await api.get('schedule', {
+      const response = await api.get('schedules', {
         params: { date },
       });
-
+      const { appointments } = response.data;
       const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
       const data = range.map(hour => {
@@ -43,7 +43,7 @@ export default function Dashboard() {
         return {
           time: `${hour}:00h`,
           past: isBefore(compareDate, new Date()),
-          appointment: response.data.find(a =>
+          appointment: appointments.find(a =>
             isEqual(parseISO(a.date), compareDate)
           ),
         };
@@ -53,7 +53,7 @@ export default function Dashboard() {
     }
 
     loadSchedule();
-  }, [date, setDate]);
+  }, [date]);
 
   function handlePrevDay() {
     setDate(subDays(date, 1));
